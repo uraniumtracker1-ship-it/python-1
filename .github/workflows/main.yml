@@ -1,37 +1,59 @@
-name: Uranium Data Pipeline 1
+name: uranium Stock Pipeline 1
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
-  run-pipeline:
+  scrape:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - name: Checkout code# caches pip packages automatically
-
+      - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Cache apt packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: chromium-browser chromium-chromedriver xvfb libpq-dev build-essential
+          version: 1.0
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            chromium-browser \
+            chromium-chromedriver \
+            xvfb \
+            libpq-dev \
+            build-essential
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'      
+          python-version: "3.12"
 
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+      - name: Install Python dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
       - name: Run pipeline
+        run: Xvfb :99 -screen 0 1024x768x24 & sleep 1 && python app.py
         env:
+          DISPLAY: ":99"
+          CHROME_BIN: "/usr/bin/chromium-browser"
+          CHROMEDRIVER_PATH: "/usr/bin/chromedriver"
           DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: |
-          python app.py
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          SERVER_CONFIG: ${{ secrets.SERVER_CONFIG }}
