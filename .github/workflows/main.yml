@@ -1,0 +1,37 @@
+name: Uranium Data Pipeline 1
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code# caches pip packages automatically
+
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'      
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: Run pipeline
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          python app.py
