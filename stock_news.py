@@ -10,10 +10,10 @@ import time
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def load_copper_stocks():
-    """Load lithium stock tickers from CSV file"""
+def load_uranium_stocks():
+    """Load uranium stock tickers from CSV file"""
     stocks = []
-    csv_path = 'lithium_stocks_complete.csv'
+    csv_path = 'uranium_stocks_complete.csv'
     
     try:
         with open(csv_path, 'r', encoding='utf-8') as file:
@@ -33,11 +33,11 @@ def load_copper_stocks():
                     'exchange': exchange
                 })
         
-        logging.info(f"Loaded {len(stocks)} copper stocks from CSV")
+        logging.info(f"Loaded {len(stocks)} uranium stocks from CSV")
         return stocks
         
     except Exception as e:
-        logging.error(f"Error loading copper stocks: {e}")
+        logging.error(f"Error loading uranium stocks: {e}")
         return []
 
 def map_ticker_for_yahoo(ticker, exchange):
@@ -72,7 +72,7 @@ def get_all_stock_news(cursor):
     Fetches the latest news for all tickers from the CSV file.
     Returns a list of news items with ticker information.
     """
-    stocks = load_copper_stocks()
+    stocks = load_uranium_stocks()
     return_all_news = []
     
     # Process stocks in batches to avoid overwhelming the API

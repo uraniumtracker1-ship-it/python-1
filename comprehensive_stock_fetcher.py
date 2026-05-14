@@ -62,7 +62,7 @@ custom_mappings = {
 def load_all_stock_data():
     """Load all stock data from CSV file with complete details"""
     stock_data = []
-    csv_path = 'lithium_stocks_complete.csv'
+    csv_path = 'uranium_stocks_complete.csv'
     
     if not os.path.exists(csv_path):
         logger.error(f"CSV file not found: {csv_path}")

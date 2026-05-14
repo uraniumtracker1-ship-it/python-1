@@ -1,8 +1,8 @@
 """
-YouTube Videos Updater Script for Lithium Content
+YouTube Videos Updater Script for Uranium Content
 
 This script updates the VideoPageData table with fresh YouTube videos
-by searching for lithium mining, lithium market analysis, and lithium-related content in different categories.
+by searching for uranium mining, uranium market analysis, and uranium-related content in different categories.
 """
 
 import sys
@@ -222,13 +222,13 @@ def is_relevant_video(title, channel, duration):
     """
     text = (title + ' ' + channel).lower()
     
-    # Must contain lithium-related keywords
+    # Must contain uranium-related keywords
     required_keywords = [
-        'lithium', 'lithium mining', 'lithium price', 'lithium market', 'lithium stocks',
-        'lithium futures', 'lithium investment', 'battery metals', 'ev metals',
-        'mining', 'commodity', 'metal prices', 'lithium demand', 'lithium supply',
-        'lithium carbonate', 'lithium hydroxide', 'spodumene', 'brine', 'hard rock lithium',
-        'electric vehicle', 'ev battery', 'battery technology'
+        'uranium', 'uranium mining', 'uranium price', 'uranium market', 'uranium stocks',
+        'uranium futures', 'uranium investment', 'nuclear energy', 'nuclear power',
+        'mining', 'commodity', 'metal prices', 'uranium demand', 'uranium supply',
+        'uranium oxide', 'yellowcake', 'u3o8', 'nuclear fuel', 'enrichment',
+        'cameco', 'kazatomprom', 'sprott uranium', 'uranium etf'
     ]
     
     # Exclude irrelevant content
@@ -236,7 +236,7 @@ def is_relevant_video(title, channel, duration):
         'music', 'song', 'album', 'concert', 'gaming', 'game', 'movie', 'film',
         'recipe', 'cooking', 'fashion', 'beauty', 'sports', 'football', 'basketball',
         'unboxing', 'reaction', 'prank', 'challenge', 'tiktok', 'shorts compilation',
-        'lithium battery diy', 'lithium battery repair', 'phone battery', 'laptop battery',
+        'uranium battery diy', 'phone battery', 'laptop battery',
         'battery replacement', 'battery mod', 'battery hack'
     ]
     
@@ -277,36 +277,23 @@ def extract_company_info(title, channel):
     Returns:
         tuple: (company_name, stock_ticker)
     """
-    # Common lithium companies and their tickers
+    # Common uranium companies and their tickers
     companies = {
-        # Major Producers & Developers
-        'lithium americas': {'name': 'Lithium Americas', 'ticker': 'LAC'},
-        'standard lithium': {'name': 'Standard Lithium', 'ticker': 'SLI'},
-        'lithium argentina': {'name': 'Lithium Argentina', 'ticker': 'LAR'},
-        'sigma lithium': {'name': 'Sigma Lithium', 'ticker': 'SGML'},
-        'patriot battery': {'name': 'Patriot Battery Metals', 'ticker': 'PMET'},
-        'frontier lithium': {'name': 'Frontier Lithium', 'ticker': 'FL'},
-        'rock tech lithium': {'name': 'Rock Tech Lithium', 'ticker': 'RCK'},
-        'american lithium': {'name': 'American Lithium', 'ticker': 'LI'},
-        'lithium ionic': {'name': 'Lithium Ionic', 'ticker': 'LTH'},
-        'power metals': {'name': 'Power Metals', 'ticker': 'PWM'},
-        
-        # Explorers
-        'green technology': {'name': 'Green Technology Metals', 'ticker': 'GT'},
-        'snow lake lithium': {'name': 'Snow Lake Lithium', 'ticker': 'LITM'},
-        'snow lake': {'name': 'Snow Lake Lithium', 'ticker': 'LITM'},
-        'brunswick exploration': {'name': 'Brunswick Exploration', 'ticker': 'BRW'},
-        'li-ft power': {'name': 'Li-FT Power', 'ticker': 'LIFT'},
-        'lift power': {'name': 'Li-FT Power', 'ticker': 'LIFT'},
-        'volt lithium': {'name': 'Volt Lithium', 'ticker': 'VLT'},
-        
-        # International Giants
-        'albemarle': {'name': 'Albemarle Corporation', 'ticker': 'ALB'},
-        'livent': {'name': 'Livent Corporation', 'ticker': 'LTHM'},
-        'sqm': {'name': 'Sociedad Química y Minera', 'ticker': 'SQM'},
-        'ganfeng': {'name': 'Ganfeng Lithium', 'ticker': '1772.HK'},
-        'pilbara minerals': {'name': 'Pilbara Minerals', 'ticker': 'PLS.AX'},
-        'pilbara': {'name': 'Pilbara Minerals', 'ticker': 'PLS.AX'}
+        # Major Producers
+        'cameco': {'name': 'Cameco Corporation', 'ticker': 'CCJ'},
+        'kazatomprom': {'name': 'Kazatomprom', 'ticker': 'KAP'},
+        'paladin energy': {'name': 'Paladin Energy', 'ticker': 'PDN.AX'},
+        'nexgen energy': {'name': 'NexGen Energy', 'ticker': 'NXE'},
+        'denison mines': {'name': 'Denison Mines', 'ticker': 'DNN'},
+        'uranium energy': {'name': 'Uranium Energy Corp', 'ticker': 'UEC'},
+        'energy fuels': {'name': 'Energy Fuels', 'ticker': 'UUUU'},
+        'encore energy': {'name': 'enCore Energy', 'ticker': 'EU'},
+        'boss energy': {'name': 'Boss Energy', 'ticker': 'BOE.AX'},
+        'yellow cake': {'name': 'Yellow Cake plc', 'ticker': 'YCA.L'},
+        # ETFs
+        'sprott uranium': {'name': 'Sprott Uranium Miners ETF', 'ticker': 'URNM'},
+        'global x uranium': {'name': 'Global X Uranium ETF', 'ticker': 'URA'},
+        'vaneck uranium': {'name': 'VanEck Uranium+Nuclear Energy ETF', 'ticker': 'NLR'},
     }
     
     text = (title + ' ' + channel).lower()
@@ -329,37 +316,37 @@ def scrape_youtube_videos():
     # Define search queries for each category (multiple queries per category for better results)
     search_queries = {
         'Featured': [
-            'lithium market analysis',
-            'lithium price forecast', 
-            'lithium investment outlook',
-            'lithium stocks 2024',
-            'lithium demand supply',
-            'battery metals investment'
+            'uranium market analysis',
+            'uranium price forecast',
+            'uranium investment outlook',
+            'uranium stocks 2024',
+            'uranium demand supply',
+            'nuclear energy investment'
         ],
         'Company': [
-            'lithium mining stocks',
-            'Lithium Americas news',
-            'Albemarle lithium',
-            'Sigma Lithium production',
-            'lithium mining companies',
-            'lithium stock analysis'
+            'uranium mining stocks',
+            'Cameco uranium news',
+            'Sprott uranium ETF',
+            'Kazatomprom uranium',
+            'uranium mining companies',
+            'uranium stock analysis'
         ],
         'Podcast': [
-            'lithium market podcast',
-            'battery metals podcast',
+            'uranium market podcast',
+            'nuclear energy podcast',
             'mining podcast',
             'commodity trading podcast',
-            'lithium investment interview',
-            'ev metals podcast'
+            'uranium investment interview',
+            'nuclear fuel podcast'
         ],
         'Education': [
-            'what is lithium metal',
-            'how lithium is mined',
-            'lithium uses applications',
-            'lithium market explained',
-            'lithium investment guide',
-            'battery metals explained',
-            'lithium carbonate vs hydroxide'
+            'what is uranium mining',
+            'how uranium is mined',
+            'uranium uses nuclear',
+            'uranium market explained',
+            'uranium investment guide',
+            'nuclear fuel cycle explained',
+            'yellowcake uranium explained'
         ]
     }
     

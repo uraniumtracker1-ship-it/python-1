@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Main Application - Copper Stock Data Collection Pipeline
+Main Application - Uranium Stock Data Collection Pipeline
 Process-based execution: 
 - process1 = stock fetcher
 - process2 = press release scraper
@@ -19,7 +19,7 @@ from datetime import datetime
 from comprehensive_stock_fetcher import process_all_stocks as run_stock_fetcher
 from press_release_scraper import main as run_press_release_scraper
 from stock_news import main as run_stock_news_fetcher
-from substacks_scraper import scrape_substack_lithium_posts, insert_substack_posts_to_db, ensure_table_exists
+from substacks_scraper import scrape_substack_uranium_posts, insert_substack_posts_to_db, ensure_table_exists
 from youtube_scraper import main as run_youtube_scraper
 from news_scrape import (
     scrape_latest_articles_from_mining_site,
@@ -37,7 +37,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('copper_data_pipeline.log'),
+        logging.FileHandler('uranium_data_pipeline.log'),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -119,7 +119,7 @@ def main():
             ensure_table_exists(cursor, connection)
             
             # Scrape Substack posts
-            posts = scrape_substack_lithium_posts(cursor, max_posts=10)
+            posts = scrape_substack_uranium_posts(cursor, max_posts=10)
             if posts:
                 logging.info(f"Found {len(posts)} Substack posts. Inserting into database...")
                 insert_substack_posts_to_db(cursor, connection, posts)
@@ -260,7 +260,7 @@ def main():
             # Source 6: Mining Weekly
             logging.info("Scraping Mining Weekly...")
             try:
-                articles = scrape_articles_from_miningweekly(cursor, 'copper')
+                articles = scrape_articles_from_miningweekly(cursor, 'uranium')
                 for article in articles:
                     insert_general_news(
                         cursor, connection,

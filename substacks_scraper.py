@@ -48,9 +48,9 @@ def wait_and_find_element(driver, by, value, timeout=10):
         return None
 
 
-def scrape_substack_lithium_posts(cursor=None, max_posts=10):
+def scrape_substack_uranium_posts(cursor=None, max_posts=10):
     """
-    Scrapes lithium-related posts from Substack.
+    Scrapes uranium-related posts from Substack.
     
     Parameters:
         cursor (psycopg2.cursor, optional): Database cursor for checking duplicates
@@ -67,7 +67,7 @@ def scrape_substack_lithium_posts(cursor=None, max_posts=10):
     try:
         # Navigate to the search page
         print("Navigating to Substack search page...")
-        search_url = "https://substack.com/search/lithium?sort=new&searching=all_posts&include_recommendations=false"
+        search_url = "https://substack.com/search/uranium?sort=new&searching=all_posts&include_recommendations=false"
         driver.get(search_url)
         
         # Wait for the search results to load
@@ -255,8 +255,8 @@ if __name__ == "__main__":
         # Ensure table exists
         ensure_table_exists(cursor, connection)
         
-        print("Starting Substack lithium posts scraping...")
-        posts = scrape_substack_lithium_posts(cursor)
+        print("Starting Substack uranium posts scraping...")
+        posts = scrape_substack_uranium_posts(cursor)
         if posts:
             print(f"Found {len(posts)} posts. Inserting into database...")
             insert_substack_posts_to_db(cursor, connection, posts)
