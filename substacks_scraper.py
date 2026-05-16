@@ -17,7 +17,6 @@ import logging
 
 
 def init_driver():
-    """Initialize Chrome WebDriver"""
     chrome_options = Options()
     chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--no-sandbox")
@@ -27,10 +26,13 @@ def init_driver():
     chrome_options.add_argument("--disable-software-rasterizer")
     chrome_options.add_argument("--disable-setuid-sandbox")
     chrome_options.add_argument("--window-size=1024,768")
-    
-    chrome_options.binary_location = "/usr/bin/chromium"
-    service = Service("/usr/bin/chromedriver")
-    
+
+    chrome_bin = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
+    chromedriver_path = os.environ.get("CHROMEDRIVER_PATH", "/usr/lib/chromium-browser/chromedriver")
+
+    chrome_options.binary_location = chrome_bin
+    service = Service(chromedriver_path)
+
     driver = webdriver.Chrome(service=service, options=chrome_options)
     driver.set_page_load_timeout(30)
     driver.implicitly_wait(5)
