@@ -1,5 +1,4 @@
-name: uranium Stock Pipeline 1
-
+name: Uranium Stock Pipeline 1
 on:
   schedule:
     - cron: "*/30 * * * *"
@@ -18,18 +17,8 @@ jobs:
       - name: Cache apt packages
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: chromium-browser chromium-chromedriver xvfb libpq-dev build-essential
+          packages: chromium-browser chromium-chromedriver libpq-dev build-essential
           version: 1.0
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            chromium-browser \
-            chromium-chromedriver \
-            xvfb \
-            libpq-dev \
-            build-essential
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -43,14 +32,13 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
 
       - name: Install Python dependencies
-        run: pip install --no-cache-dir -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run pipeline
-        run: Xvfb :99 -screen 0 1024x768x24 & sleep 1 && python app.py
+        run: python app.py
         env:
-          DISPLAY: ":99"
           CHROME_BIN: "/usr/bin/chromium-browser"
-          CHROMEDRIVER_PATH: "/usr/bin/chromedriver"
+          CHROMEDRIVER_PATH: "/usr/lib/chromium-browser/chromedriver"
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
