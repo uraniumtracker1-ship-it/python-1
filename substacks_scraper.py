@@ -15,8 +15,8 @@ import re
 import os
 import logging
 
-
 def init_driver():
+    """Initialize Chrome WebDriver"""
     chrome_options = Options()
     chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--no-sandbox")
@@ -26,19 +26,40 @@ def init_driver():
     chrome_options.add_argument("--disable-software-rasterizer")
     chrome_options.add_argument("--disable-setuid-sandbox")
     chrome_options.add_argument("--window-size=1024,768")
+    chrome_options.add_argument("--remote-debugging-port=9222")
 
-    chrome_bin = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = os.environ.get("CHROMEDRIVER_PATH", "/usr/lib/chromium-browser/chromedriver")
+    # Auto-detect correct binary paths
+    chromium_paths = [
+        "/usr/lib/chromium-browser/chromium-browser",  # matches your chromedriver location
+        "/usr/bin/chromium-browser",
+        "/usr/bin/chromium",
+    ]
+    chromedriver_paths = [
+        "/usr/lib/chromium-browser/chromedriver",      # matches your error log
+        "/usr/bin/chromedriver",
+    ]
 
-    chrome_options.binary_location = chrome_bin
-    service = Service(chromedriver_path)
+    chromium_bin = next((p for p in chromium_paths if os.path.exists(p)), None)
+    chromedriver_bin = next((p for p in chromedriver_paths if os.path.exists(p)), None)
 
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    driver.set_page_load_timeout(30)
-    driver.implicitly_wait(5)
-    return driver
+    if not chromium_bin or not chromedriver_bin:
+        logging.error(f"Could not find Chromium binary ({chromium_bin}) or ChromeDriver ({chromedriver_bin})")
+        return None
 
+    logging.info(f"Using Chromium: {chromium_bin}")
+    logging.info(f"Using ChromeDriver: {chromedriver_bin}")
 
+    chrome_options.binary_location = chromium_bin
+    service = Service(chromedriver_bin)
+
+    try:
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver.set_page_load_timeout(30)
+        driver.implicitly_wait(5)
+        return driver
+    except Exception as e:
+        logging.error(f"Failed to initialize WebDriver: {e}")
+        return None
 def wait_and_find_element(driver, by, value, timeout=10):
     """Helper function to wait for and find an element"""
     try:
