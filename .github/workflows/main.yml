@@ -14,6 +14,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+        id: setup-chrome
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -26,22 +32,15 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
 
       - name: Install Python dependencies
-        run: pip install -r requirements.txt
-
-      - name: Install Chromium via playwright or direct deb (snap-free)
         run: |
-          # Install chromium from the Ubuntu chromium-browser PPA (not snap)
-          sudo add-apt-repository ppa:phd/chromium-browser -y
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
-          
-          # Verify
-          chromium-browser --version
-          chromedriver --version || /usr/lib/chromium-browser/chromedriver --version
+          sudo apt-get install -y libpq-dev build-essential
+          pip install -r requirements.txt
 
       - name: Run pipeline
         run: python app.py
         env:
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.setup-chrome.outputs.chromedriver-path }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
