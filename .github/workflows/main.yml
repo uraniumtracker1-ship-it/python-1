@@ -14,12 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache apt packages
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: chromium-browser chromium-chromedriver libpq-dev build-essential
-          version: 1.0
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -34,11 +28,20 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
+      - name: Install Chromium via playwright or direct deb (snap-free)
+        run: |
+          # Install chromium from the Ubuntu chromium-browser PPA (not snap)
+          sudo add-apt-repository ppa:phd/chromium-browser -y
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+          
+          # Verify
+          chromium-browser --version
+          chromedriver --version || /usr/lib/chromium-browser/chromedriver --version
+
       - name: Run pipeline
         run: python app.py
         env:
-          CHROME_BIN: "/usr/bin/chromium-browser"
-          CHROMEDRIVER_PATH: "/usr/lib/chromium-browser/chromedriver"
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
